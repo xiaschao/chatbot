@@ -6,7 +6,7 @@ var API = (function () {
     const headers = {};
     const token = localStorage.getItem(TOKEN_KEY);
     if (token) headers.authorization = `Bearer ${token}`;
-    fetch(BASE_URL + path, { headers });
+    return fetch(BASE_URL + path, { headers });
   }
 
   function post(path, bodyObj) {
@@ -15,18 +15,20 @@ var API = (function () {
     };
     const token = localStorage.getItem(TOKEN_KEY);
     if (token) headers.authorization = `Bearer ${token}`;
-    fetch(BASE_URL + path, {
+    return fetch(BASE_URL + path, {
+      method: 'POST',
       headers,
       body: JSON.stringify(bodyObj),
     });
   }
 
   async function reg(userInfo) {
-    return await post('/api/user/reg', userInfo).then((resp) => resp.json());
+    const resp = await post('/api/user/reg', userInfo);
+    return await resp.json();
   }
 
   function login(loginInfo) {
-    return post('/api/user/login').then((resp) => {
+    return post('/api/user/login', loginInfo).then((resp) => {
       const result = resp.json();
       if (result.code === 0) {
         localStorage.setItem(TOKEN_KEY, resp.headers.get('authorization'));
