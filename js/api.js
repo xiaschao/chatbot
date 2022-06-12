@@ -27,14 +27,13 @@ var API = (function () {
     return await resp.json();
   }
 
-  function login(loginInfo) {
-    return post('/api/user/login', loginInfo).then((resp) => {
-      const result = resp.json();
-      if (result.code === 0) {
-        localStorage.setItem(TOKEN_KEY, resp.headers.get('authorization'));
-      }
-      return result;
-    });
+  async function login(loginInfo) {
+    const resp = await post('/api/user/login', loginInfo);
+    const result = await resp.json();
+    if (result.code === 0) {
+      localStorage.setItem(TOKEN_KEY, resp.headers.get('authorization'));
+    }
+    return result;
   }
 
   function exists(loginId) {
@@ -46,7 +45,7 @@ var API = (function () {
   }
 
   function sendChat(content) {
-    return post('/api/chat', content).then((resp) => resp.json());
+    return post('/api/chat', { content }).then((resp) => resp.json());
   }
 
   function getChatHistory() {
@@ -59,5 +58,6 @@ var API = (function () {
     profile,
     sendChat,
     getChatHistory,
+    TOKEN_KEY,
   };
 })();
